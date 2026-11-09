@@ -21,6 +21,7 @@
       --accent-glow: rgba(245, 158, 11, 0.2);
       --input-bg: #0f172a;
       --input-border: #334155;
+      --table-header: #1e293b;
       --modal-bg: #1e293b;
     }
 
@@ -35,6 +36,7 @@
       --accent-glow: rgba(217, 119, 6, 0.15);
       --input-bg: #f1f5f9;
       --input-border: #cbd5e1;
+      --table-header: #f1f5f9;
       --modal-bg: #ffffff;
     }
 
@@ -151,6 +153,7 @@
     }
     .btn-calc:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
+    /* Results Grid */
     .results-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -170,6 +173,7 @@
     .res-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; color: var(--text-main); }
     .res-card p { font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
 
+    /* Action bar */
     .action-bar { display: flex; gap: 10px; justify-content: flex-end; }
     .btn-action {
       background: transparent;
@@ -188,6 +192,7 @@
 
     footer { margin-top: 30px; text-align: center; color: var(--text-muted); font-size: 13px; }
 
+    /* Modals */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
@@ -210,11 +215,6 @@
       padding: 12px 20px; border-radius: 12px; font-weight: 700; text-decoration: none; margin-top: 10px;
     }
     .whatsapp-btn:hover { background: #20ba5a; }
-
-    .hub-link {
-      display: inline-block; color: var(--accent); font-weight: 700; text-decoration: none; margin-top: 5px;
-    }
-    .hub-link:hover { text-decoration: underline; }
 
     @media (max-width: 768px) {
       .navbar { flex-direction: column; gap: 12px; }
@@ -348,16 +348,12 @@
     </div>
   </div>
 
-  <!-- Contact Modal with Hub Link & WhatsApp -->
+  <!-- Contact Modal with Fixed WhatsApp Link -->
   <div class="modal-overlay" id="contactModal">
     <div class="modal">
-      <button class="modal-close" onclick="closeModal('contactModal')"><i class="fa-solid fa-xmark"></i></button>
+      <button class="modal-close" onclick="closeModal('https://saas-tools-hub.vercel.app/')"><i class="fa-solid fa-xmark"></i></button>
       <h2>Contact Support & Custom Tools</h2>
-      <p>Explore more professional tools on our Hub:</p>
-      <a href="https://saas-tools-hub.vercel.app/" target="_blank" class="hub-link">
-        <i class="fa-solid fa-globe"></i> saas-tools-hub.vercel.app
-      </a>
-      <p style="margin-top: 15px;">Need custom tool development or modifications? Reach out directly via WhatsApp:</p>
+      <p>Need custom tool development or modifications? Reach out directly via WhatsApp:</p>
       <a href="https://wa.me/923089423733?text=Hi%20Ahmad,%20I%20want%20to%20discuss%20BuildCalc%20Pro" target="_blank" class="whatsapp-btn">
         <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp (+92 308 9423733)
       </a>
@@ -385,14 +381,14 @@
       const curr = document.getElementById('currency').value;
 
       const perimeter = 2 * (L + W);
-      const wallArea = Math.max((perimeter * H) - 50, 0);
+      const wallArea = Math.max((perimeter * H) - 50, 0); // deducting doors/windows
       const volumeCFT = wallArea * (T / 12);
 
       const bricks = Math.round(volumeCFT * (T === 9 ? 13.5 : 6.8));
       const cement = Math.round(volumeCFT * 0.22);
       const sand = Math.round(volumeCFT * 0.9);
 
-      let unitRate = 22;
+      let unitRate = 22; // PKR base rate per brick equivalent
       let symbol = '₨ ';
       if (curr === 'USD') { unitRate = 0.08; symbol = '$'; }
       else if (curr === 'INR') { unitRate = 6.5; symbol = '₹'; }
