@@ -3,835 +3,413 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BuildCalc Pro — Enterprise Construction Material & Cost Estimator</title>
-  <!-- Google Fonts: Plus Jakarta Sans -->
+  <title>BuildCalc Pro — Advanced Construction & Material Estimator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: ['class', '[data-theme="dark"]'],
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#fffbeeb',
-              100: '#fef3c7',
-              400: '#fbbf24',
-              500: '#f59e0b',
-              600: '#d97706',
-              700: '#b45309',
-            },
-            accent: {
-              500: '#38bdf8',
-              600: '#0284c7',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <style>
-    /* Custom Scrollbar & Glassmorphism Tokens */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.3); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.6); }
-
-    .glass-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
-    }
-    [data-theme="light"] .glass-card {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      color: #0f172a;
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
+      --card-bg: rgba(30, 41, 59, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --accent-glow: rgba(245, 158, 11, 0.2);
+      --input-bg: #0f172a;
+      --input-border: #334155;
+      --modal-bg: #1e293b;
     }
 
-    .glass-nav {
-      background: rgba(15, 23, 42, 0.85);
+    [data-theme="light"] {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #f8fafc 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --accent: #d97706;
+      --accent-hover: #b45309;
+      --accent-glow: rgba(217, 119, 6, 0.15);
+      --input-bg: #f1f5f9;
+      --input-border: #cbd5e1;
+      --modal-bg: #ffffff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.25s, color 0.25s, border-color 0.25s; }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .navbar {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--card-bg);
       backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    [data-theme="light"] .glass-nav {
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    }
-
-    /* Dynamic text colors for Theme support */
-    .text-title { color: #f8fafc; }
-    [data-theme="light"] .text-title { color: #0f172a; }
-
-    .text-sub { color: #94a3b8; }
-    [data-theme="light"] .text-sub { color: #475569; }
-
-    .text-label { color: #cbd5e1; }
-    [data-theme="light"] .text-label { color: #334155; }
-
-    .input-box-theme {
-      background-color: #0f172a;
-      border-color: #1e293b;
-      color: #f8fafc;
-    }
-    [data-theme="light"] .input-box-theme {
-      background-color: #f8fafc;
-      border-color: #cbd5e1;
-      color: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
     }
 
-    .svg-bg { fill: rgba(15, 23, 42, 0.9); }
-    [data-theme="light"] .svg-bg { fill: #f1f5f9; }
+    .brand { font-size: 20px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 10px; }
 
-    .svg-wall { fill: rgba(30, 41, 59, 0.8); stroke: #38bdf8; }
-    [data-theme="light"] .svg-wall { fill: #e2e8f0; stroke: #0284c7; }
-
-    .glow-amber {
-      box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
-    /* Print styles */
-    @media print {
-      body { background: white !important; color: black !important; }
-      .no-print { display: none !important; }
-      .print-only { display: block !important; }
-      .glass-card { border: 1px solid #ccc !important; background: none !important; box-shadow: none !important; color: black !important; }
-      .text-title, .text-sub, .text-label { color: black !important; }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .controls-right { display: flex; align-items: center; gap: 10px; }
+
+    .theme-btn, .currency-select {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .hero { text-align: center; margin-bottom: 30px; }
+    .hero h1 { font-size: 30px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .hero p { color: var(--text-muted); font-size: 14px; }
+
+    .grid-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .input-box {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      padding: 14px;
+      border-radius: 14px;
+    }
+
+    .input-box label { display: block; font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input-box input, .input-box select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .btn-calc {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--accent-glow);
+      margin-bottom: 25px;
+    }
+    .btn-calc:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .res-card {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .res-card i { font-size: 22px; color: var(--accent); margin-bottom: 8px; }
+    .res-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; color: var(--text-main); }
+    .res-card p { font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+
+    .action-bar { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-action {
+      background: transparent;
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+
+    footer { margin-top: 30px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal {
+      background: var(--modal-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px; width: 90%; max-width: 550px;
+      padding: 30px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    }
+    .modal h2 { font-size: 22px; margin-bottom: 12px; color: var(--text-main); }
+    .modal p { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px; background: transparent;
+      border: none; color: var(--text-muted); font-size: 18px; cursor: pointer;
+    }
+    .whatsapp-btn {
+      display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white;
+      padding: 12px 20px; border-radius: 12px; font-weight: 700; text-decoration: none; margin-top: 10px;
+    }
+    .whatsapp-btn:hover { background: #20ba5a; }
+
+    .hub-link {
+      display: inline-block; color: var(--accent); font-weight: 700; text-decoration: none; margin-top: 5px;
+    }
+    .hub-link:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .navbar { flex-direction: column; gap: 12px; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+<body>
 
-  <!-- ================= NAVBAR ================= -->
-  <nav class="sticky top-0 z-50 glass-nav transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      <!-- Logo -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('calc')">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-slate-950 font-extrabold text-xl shadow-lg glow-amber">
-          <i class="fa-solid fa-helmet-safety"></i>
-        </div>
-        <div>
-          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 bg-clip-text text-transparent">BuildCalc Pro</span>
-          <span class="block text-[10px] font-semibold tracking-wider text-amber-500 uppercase">Enterprise Estimator</span>
-        </div>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="brand"><i class="fa-solid fa-trowel-bricks"></i> BuildCalc Pro</div>
+    <div class="nav-links">
+      <a onclick="openModal('aboutModal')">About Us</a>
+      <a onclick="openModal('guideModal')">Guide</a>
+      <a onclick="openModal('privacyModal')">Privacy</a>
+      <a onclick="openModal('termsModal')">Terms</a>
+      <a onclick="openModal('contactModal')">Contact</a>
+    </div>
+    <div class="controls-right">
+      <select class="currency-select" id="currency" onchange="calculateMaterial()">
+        <option value="PKR">PKR (₨)</option>
+        <option value="USD">USD ($)</option>
+        <option value="INR">INR (₹)</option>
+        <option value="EUR">EUR (€)</option>
+      </select>
+      <button class="theme-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="hero">
+      <h1>Construction Material & Cost Estimator</h1>
+      <p>Calculate precise bricks, cement bags, sand, crush, and estimated material costs instantly.</p>
+    </div>
+
+    <!-- Inputs Grid -->
+    <div class="grid-inputs">
+      <div class="input-box">
+        <label>Room Length (Feet)</label>
+        <input type="number" id="length" value="15" oninput="calculateMaterial()" />
       </div>
-
-      <!-- Navigation Links -->
-      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-sub">
-        <button onclick="switchTab('calc')" id="nav-calc" class="hover:text-amber-500 transition-colors py-1 border-b-2 border-amber-500 text-amber-500">
-          <i class="fa-solid fa-calculator mr-1.5"></i> Calculator
-        </button>
-        <button onclick="switchTab('guide')" id="nav-guide" class="hover:text-amber-500 transition-colors py-1 border-b-2 border-transparent">
-          <i class="fa-solid fa-book-open mr-1.5"></i> Material Guide
-        </button>
-        <button onclick="openModal('aboutModal')" class="hover:text-amber-500 transition-colors">About Us</button>
-        <button onclick="openModal('privacyModal')" class="hover:text-amber-500 transition-colors">Privacy</button>
-        <button onclick="openModal('termsModal')" class="hover:text-amber-500 transition-colors">Terms</button>
-        <button onclick="openModal('contactModal')" class="hover:text-amber-500 transition-colors">Contact</button>
+      <div class="input-box">
+        <label>Room Width (Feet)</label>
+        <input type="number" id="width" value="12" oninput="calculateMaterial()" />
       </div>
-
-      <!-- Controls Right -->
-      <div class="flex items-center gap-3">
-        <!-- Currency Selector -->
-        <select id="currencySelect" onchange="calculateMaterial()" class="input-box-theme text-xs font-semibold rounded-lg px-2.5 py-2 focus:outline-none focus:border-amber-500">
-          <option value="USD">USD ($)</option>
-          <option value="PKR" selected>PKR (₨)</option>
-          <option value="INR">INR (₹)</option>
-          <option value="EUR">EUR (€)</option>
+      <div class="input-box">
+        <label>Wall Height (Feet)</label>
+        <input type="number" id="height" value="10" oninput="calculateMaterial()" />
+      </div>
+      <div class="input-box">
+        <label>Wall Thickness</label>
+        <select id="thickness" onchange="calculateMaterial()">
+          <option value="9">9 Inches (Outer Wall)</option>
+          <option value="4.5">4.5 Inches (Inner Partition)</option>
         </select>
-
-        <!-- Theme Toggle -->
-        <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl input-box-theme flex items-center justify-center transition-all hover:text-amber-500">
-          <i class="fa-solid fa-moon" id="themeIcon"></i>
-        </button>
-
-        <!-- Mobile Menu Btn -->
-        <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 rounded-xl input-box-theme flex items-center justify-center">
-          <i class="fa-solid fa-bars"></i>
-        </button>
       </div>
     </div>
 
-    <!-- Mobile Dropdown -->
-    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-800 px-4 py-3 space-y-2 glass-nav">
-      <button onclick="switchTab('calc'); toggleMobileMenu()" class="block w-full text-left py-2 text-amber-500 font-semibold"><i class="fa-solid fa-calculator mr-2"></i> Calculator</button>
-      <button onclick="switchTab('guide'); toggleMobileMenu()" class="block w-full text-left py-2 text-sub"><i class="fa-solid fa-book-open mr-2"></i> Material Guide</button>
-      <button onclick="openModal('aboutModal'); toggleMobileMenu()" class="block w-full text-left py-2 text-sub">About Us</button>
-      <button onclick="openModal('privacyModal'); toggleMobileMenu()" class="block w-full text-left py-2 text-sub">Privacy Policy</button>
-      <button onclick="openModal('termsModal'); toggleMobileMenu()" class="block w-full text-left py-2 text-sub">Terms of Use</button>
-      <button onclick="openModal('contactModal'); toggleMobileMenu()" class="block w-full text-left py-2 text-sub">Contact Developer</button>
-    </div>
-  </nav>
+    <button class="btn-calc" onclick="calculateMaterial()">
+      <i class="fa-solid fa-calculator"></i> Calculate Professional Estimate
+    </button>
 
-  <!-- ================= MAIN CONTENT WRAPPER ================= -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-    <!-- TAB 1: CALCULATOR PAGE -->
-    <section id="tab-calc" class="space-y-8">
-      
-      <!-- HERO HEADER -->
-      <div class="text-center max-w-3xl mx-auto space-y-3">
-        <span class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20 inline-flex items-center gap-2">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> AI-Powered Quantity Surveyor Engine
-        </span>
-        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-title">
-          Precision Material & Cost Estimator
-        </h1>
-        <p class="text-sub text-sm sm:text-base leading-relaxed">
-          Specify your room or structural parameters below to generate a instant breakdown of bricks, cement, sand, gravel, rebar, tiles, and total estimated budget.
-        </p>
+    <!-- Results Grid -->
+    <div class="results-grid">
+      <div class="res-card">
+        <i class="fa-solid fa-cubes"></i>
+        <h3 id="resBricks">0</h3>
+        <p>Total Bricks (Eentein)</p>
       </div>
-
-      <!-- MAIN CALCULATOR GRID -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        <!-- INPUT CONTROLS PANEL (LEFT 5 COLS) -->
-        <div class="lg:col-span-5 glass-card rounded-2xl p-6 sm:p-7 space-y-6">
-          <div class="flex items-center justify-between border-b border-slate-700/50 pb-4">
-            <h2 class="text-lg font-bold text-title flex items-center gap-2.5">
-              <i class="fa-solid fa-sliders text-amber-500"></i> Room Measurements
-            </h2>
-            <button onclick="resetInputs()" class="text-xs text-sub hover:text-amber-500 flex items-center gap-1">
-              <i class="fa-solid fa-rotate-left"></i> Reset
-            </button>
-          </div>
-
-          <!-- INPUT FORM -->
-          <div class="space-y-4 text-sm">
-            
-            <!-- Dimensions Row 1 -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-bold text-label uppercase tracking-wider mb-1.5">Length (Feet)</label>
-                <div class="relative">
-                  <input type="number" id="length" value="14" min="1" step="0.5" oninput="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3.5 py-2.5 font-bold focus:outline-none focus:border-amber-500 transition-colors pl-9">
-                  <i class="fa-solid fa-ruler-horizontal absolute left-3 top-3.5 text-sub text-xs"></i>
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-label uppercase tracking-wider mb-1.5">Width (Feet)</label>
-                <div class="relative">
-                  <input type="number" id="width" value="12" min="1" step="0.5" oninput="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3.5 py-2.5 font-bold focus:outline-none focus:border-amber-500 transition-colors pl-9">
-                  <i class="fa-solid fa-ruler-vertical absolute left-3 top-3.5 text-sub text-xs"></i>
-                </div>
-              </div>
-            </div>
-
-            <!-- Dimensions Row 2 -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-bold text-label uppercase tracking-wider mb-1.5">Wall Height (Feet)</label>
-                <div class="relative">
-                  <input type="number" id="height" value="10" min="1" step="0.5" oninput="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3.5 py-2.5 font-bold focus:outline-none focus:border-amber-500 transition-colors pl-9">
-                  <i class="fa-solid fa-arrows-up-down absolute left-3 top-3.5 text-sub text-xs"></i>
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-label uppercase tracking-wider mb-1.5">Wall Thickness</label>
-                <select id="thickness" onchange="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3 py-2.5 font-bold focus:outline-none focus:border-amber-500 transition-colors">
-                  <option value="9">9" (Standard Outer Wall)</option>
-                  <option value="4.5">4.5" (Inner Partition Wall)</option>
-                  <option value="13.5">13.5" (Heavy Load Bearing)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Advanced Mix Parameters -->
-            <div class="pt-2 border-t border-slate-700/50 space-y-4">
-              <span class="block text-xs font-extrabold text-amber-500 uppercase tracking-wider">Mix Ratios & Specifications</span>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-[11px] font-semibold text-label mb-1">Mortar Mix Ratio</label>
-                  <select id="mortarRatio" onchange="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-amber-500">
-                    <option value="1:4">1:4 (Standard 9" Masonry)</option>
-                    <option value="1:5" selected>1:5 (Medium Load)</option>
-                    <option value="1:6">1:6 (Partition Wall)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[11px] font-semibold text-label mb-1">Roof Slab Thickness</label>
-                  <select id="slabThickness" onchange="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-amber-500">
-                    <option value="4">4 Inches (Standard)</option>
-                    <option value="5" selected>5 Inches (Recommended)</option>
-                    <option value="6">6 Inches (Heavy Slab)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-[11px] font-semibold text-label mb-1">Door & Window Opening</label>
-                  <select id="openingsDeduction" onchange="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-amber-500">
-                    <option value="0">No Openings (Solid Room)</option>
-                    <option value="45">1 Door + 1 Window (~45 sqft)</option>
-                    <option value="75" selected>1 Door + 2 Windows (~75 sqft)</option>
-                    <option value="110">2 Doors + 2 Windows (~110 sqft)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[11px] font-semibold text-label mb-1">Plaster Both Sides?</label>
-                  <select id="plasterOption" onchange="calculateMaterial()" class="w-full input-box-theme rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-amber-500">
-                    <option value="both" selected>Yes (1/2" Outer & Inner)</option>
-                    <option value="inner">Inner Wall Only</option>
-                    <option value="none">No Plaster</option>
-                  </select>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Unit Rates Accordion Header -->
-            <div class="pt-3 border-t border-slate-700/50">
-              <button onclick="toggleRatesPanel()" class="w-full flex items-center justify-between text-xs font-bold text-title hover:text-amber-500 py-1">
-                <span><i class="fa-solid fa-tags text-amber-500 mr-1.5"></i> Custom Market Unit Prices</span>
-                <i class="fa-solid fa-chevron-down text-sub text-xs transition-transform" id="ratesArrow"></i>
-              </button>
-
-              <!-- Rates Inputs Panel (Hidden by default) -->
-              <div id="ratesPanel" class="hidden mt-3 space-y-3 pt-2 text-xs border-t border-slate-700/50">
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-[10px] text-label mb-1">Brick Rate (Per Brick)</label>
-                    <input type="number" id="rateBrick" value="14" oninput="calculateMaterial()" class="w-full input-box-theme rounded-lg px-2.5 py-1.5">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-label mb-1">Cement (Per Bag)</label>
-                    <input type="number" id="rateCement" value="1350" oninput="calculateMaterial()" class="w-full input-box-theme rounded-lg px-2.5 py-1.5">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-label mb-1">Sand (Per CFT)</label>
-                    <input type="number" id="rateSand" value="55" oninput="calculateMaterial()" class="w-full input-box-theme rounded-lg px-2.5 py-1.5">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-label mb-1">Crush/Gravel (Per CFT)</label>
-                    <input type="number" id="rateCrush" value="130" oninput="calculateMaterial()" class="w-full input-box-theme rounded-lg px-2.5 py-1.5">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-label mb-1">Steel Rebar (Per KG)</label>
-                    <input type="number" id="rateSteel" value="270" oninput="calculateMaterial()" class="w-full input-box-theme rounded-lg px-2.5 py-1.5">
-                  </div>
-                  <div>
-                    <label class="block text-[10px] text-label mb-1">Labor Rate (Per SqFt)</label>
-                    <input type="number" id="rateLabor" value="450" oninput="calculateMaterial()" class="w-full input-box-theme rounded-lg px-2.5 py-1.5">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- OUTPUT RESULTS PANEL (RIGHT 7 COLS) -->
-        <div class="lg:col-span-7 space-y-6">
-          
-          <!-- 3D VISUAL CANVAS PREVIEW -->
-          <div class="glass-card rounded-2xl p-5 space-y-3">
-            <div class="flex items-center justify-between text-xs font-bold text-title">
-              <span class="flex items-center gap-2"><i class="fa-solid fa-cube text-amber-500"></i> Structural Layout Visualizer</span>
-              <span id="visualDimensionsText" class="text-amber-500 font-mono">14' × 12' × 10'</span>
-            </div>
-            
-            <div class="relative w-full h-44 svg-bg rounded-xl overflow-hidden border border-slate-700/50 flex items-center justify-center p-4">
-              <!-- SVG ROOM PREVIEW -->
-              <svg id="roomSvg" viewBox="0 0 400 200" class="w-full h-full max-w-sm transition-all duration-300">
-                <!-- Roof Slab -->
-                <polygon points="100,50 300,50 340,80 140,80" fill="rgba(245, 158, 11, 0.25)" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" />
-                <text x="220" y="62" fill="#d97706" font-size="10" font-weight="bold" text-anchor="middle">Concrete Slab (Roof)</text>
-
-                <!-- Front Wall -->
-                <polygon points="140,80 340,80 340,160 140,160" class="svg-wall" stroke-width="2" />
-                
-                <!-- Left Wall Side -->
-                <polygon points="100,50 140,80 140,160 100,130" class="svg-wall" stroke-width="2" />
-                
-                <!-- Door Frame -->
-                <rect x="220" y="110" width="30" height="50" fill="rgba(15, 23, 42, 0.4)" stroke="#f59e0b" stroke-width="1.5" />
-                <!-- Window Frame -->
-                <rect x="270" y="100" width="35" height="30" fill="rgba(15, 23, 42, 0.4)" stroke="#0284c7" stroke-width="1.5" />
-
-                <!-- Dimension Label Overlays -->
-                <text x="240" y="174" fill="#64748b" font-size="9" text-anchor="middle">Length</text>
-                <text x="110" y="105" fill="#64748b" font-size="9" text-anchor="middle">Width</text>
-                <text x="352" y="125" fill="#64748b" font-size="9">Height</text>
-              </svg>
-            </div>
-          </div>
-
-          <!-- MATERIAL CARDS GRID -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            
-            <!-- Bricks -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
-              <div class="flex items-center justify-between text-sub mb-2">
-                <span class="text-xs font-semibold">Bricks (Eentein)</span>
-                <i class="fa-solid fa-cubes text-amber-500 text-sm"></i>
-              </div>
-              <div>
-                <span class="text-2xl font-extrabold text-title" id="resBricks">0</span>
-                <span class="block text-[11px] text-sub mt-0.5" id="costBricks">Cost: -</span>
-              </div>
-            </div>
-
-            <!-- Cement Bags -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
-              <div class="flex items-center justify-between text-sub mb-2">
-                <span class="text-xs font-semibold">Cement Bags</span>
-                <i class="fa-solid fa-box-open text-amber-500 text-sm"></i>
-              </div>
-              <div>
-                <span class="text-2xl font-extrabold text-title" id="resCement">0</span>
-                <span class="block text-[11px] text-sub mt-0.5" id="costCement">Cost: -</span>
-              </div>
-            </div>
-
-            <!-- Sand (CFT) -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
-              <div class="flex items-center justify-between text-sub mb-2">
-                <span class="text-xs font-semibold">Sand (CFT/Reth)</span>
-                <i class="fa-solid fa-mountain text-amber-500 text-sm"></i>
-              </div>
-              <div>
-                <span class="text-2xl font-extrabold text-title" id="resSand">0</span>
-                <span class="block text-[11px] text-sub mt-0.5" id="costSand">Cost: -</span>
-              </div>
-            </div>
-
-            <!-- Crush / Aggregate -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
-              <div class="flex items-center justify-between text-sub mb-2">
-                <span class="text-xs font-semibold">Crush/Aggregate</span>
-                <i class="fa-solid fa-layer-group text-amber-500 text-sm"></i>
-              </div>
-              <div>
-                <span class="text-2xl font-extrabold text-title" id="resCrush">0</span>
-                <span class="block text-[11px] text-sub mt-0.5" id="costCrush">Cost: -</span>
-              </div>
-            </div>
-
-            <!-- Steel Rebar -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
-              <div class="flex items-center justify-between text-sub mb-2">
-                <span class="text-xs font-semibold">Steel Rebar (Saria)</span>
-                <i class="fa-solid fa-bars text-amber-500 text-sm"></i>
-              </div>
-              <div>
-                <span class="text-2xl font-extrabold text-title" id="resSteel">0</span>
-                <span class="block text-[11px] text-sub mt-0.5" id="costSteel">Cost: -</span>
-              </div>
-            </div>
-
-            <!-- Tiles / Flooring -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-colors">
-              <div class="flex items-center justify-between text-sub mb-2">
-                <span class="text-xs font-semibold">Flooring Tiles</span>
-                <i class="fa-solid fa-border-all text-amber-500 text-sm"></i>
-              </div>
-              <div>
-                <span class="text-2xl font-extrabold text-title" id="resTiles">0 SqFt</span>
-                <span class="block text-[11px] text-sub mt-0.5" id="costTiles">Cost: -</span>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- GRAND TOTAL BUDGET CARD -->
-          <div class="glass-card rounded-2xl p-6 border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span class="text-xs font-bold text-amber-500 uppercase tracking-wider block mb-1">Estimated Grand Total Budget</span>
-                <div class="text-3xl sm:text-4xl font-black text-title tracking-tight" id="resGrandTotal">
-                  PKR 0
-                </div>
-                <span class="text-xs text-sub mt-1 block">Includes Material Supply + Estimated Labor Construction Costs</span>
-              </div>
-
-              <!-- Export Buttons -->
-              <div class="flex items-center gap-2.5 no-print">
-                <button onclick="exportCSV()" class="px-4 py-2.5 rounded-xl input-box-theme hover:bg-slate-700/20 text-xs font-bold flex items-center gap-2 border border-slate-700/50 transition-all">
-                  <i class="fa-solid fa-file-csv text-emerald-500"></i> Export CSV
-                </button>
-                <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold flex items-center gap-2 transition-all shadow-md">
-                  <i class="fa-solid fa-print"></i> Print / PDF
-                </button>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
+      <div class="res-card">
+        <i class="fa-solid fa-box-open"></i>
+        <h3 id="resCement">0 Bags</h3>
+        <p>Cement Bags</p>
       </div>
-    </section>
-
-
-    <!-- TAB 2: DETAILED MATERIAL GUIDE -->
-    <section id="tab-guide" class="hidden space-y-8">
-      <div class="max-w-4xl mx-auto space-y-6">
-        <div class="text-center space-y-2">
-          <h2 class="text-3xl font-black text-title">Civil Engineering Material Estimation Guide</h2>
-          <p class="text-sub text-sm">Understand standard thumb rules and calculation formulas used by structural engineers.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="glass-card rounded-2xl p-6 space-y-3">
-            <div class="flex items-center gap-3 text-amber-500 font-bold text-base">
-              <i class="fa-solid fa-cubes text-xl"></i> Brick Masonry Standard
-            </div>
-            <p class="text-xs text-sub leading-relaxed">
-              Standard brick size is assumed to be 9" x 4.5" x 3". For a 9-inch thick brick wall, approximately 13.5 to 14 modular bricks are required per cubic foot (CFT) of wall volume including 10% mortar waste.
-            </p>
-          </div>
-
-          <div class="glass-card rounded-2xl p-6 space-y-3">
-            <div class="flex items-center gap-3 text-amber-500 font-bold text-base">
-              <i class="fa-solid fa-box-open text-xl"></i> Cement Mortar & Plaster Ratio
-            </div>
-            <p class="text-xs text-sub leading-relaxed">
-              For brick laying, a 1:5 ratio (1 part cement to 5 parts sand) is standard. For plastering, a 1/2-inch layer of 1:4 cement-sand mix is calculated for both internal and external wall surfaces.
-            </p>
-          </div>
-
-          <div class="glass-card rounded-2xl p-6 space-y-3">
-            <div class="flex items-center gap-3 text-amber-500 font-bold text-base">
-              <i class="fa-solid fa-layer-group text-xl"></i> Reinforced Concrete Roof Slab
-            </div>
-            <p class="text-xs text-sub leading-relaxed">
-              A standard 5-inch thick RCC roof slab uses M20 concrete mix (1:1.5:3 ratio). Steel reinforcement (Saria) is estimated at 80 kg to 100 kg per cubic meter of concrete slab volume.
-            </p>
-          </div>
-
-          <div class="glass-card rounded-2xl p-6 space-y-3">
-            <div class="flex items-center gap-3 text-amber-500 font-bold text-base">
-              <i class="fa-solid fa-calculator text-xl"></i> Wastage Factor
-            </div>
-            <p class="text-xs text-sub leading-relaxed">
-              A standard 5% wastage factor is automatically applied across bricks, sand, and aggregates to prevent shortages on the job site due to breakage and handling loss.
-            </p>
-          </div>
-        </div>
+      <div class="res-card">
+        <i class="fa-solid fa-mountain"></i>
+        <h3 id="resSand">0 Cu.Ft</h3>
+        <p>Sand / Reth</p>
       </div>
-    </section>
-
-  </main>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="glass-nav mt-auto py-6 text-xs text-sub no-print border-t border-slate-700/50">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-helmet-safety text-amber-500"></i>
-        <span>© 2026 BuildCalc Pro • Professional Construction Estimator Suite</span>
-      </div>
-      <div class="flex items-center gap-4 text-sub">
-        <button onclick="openModal('privacyModal')" class="hover:text-amber-500">Privacy Policy</button>
-        <span>•</span>
-        <button onclick="openModal('termsModal')" class="hover:text-amber-500">Terms of Use</button>
-        <span>•</span>
-        <button onclick="openModal('contactModal')" class="hover:text-amber-500">Developer Contact</button>
+      <div class="res-card">
+        <i class="fa-solid fa-coins"></i>
+        <h3 id="resCost">0</h3>
+        <p>Estimated Cost</p>
       </div>
     </div>
+
+    <div class="action-bar">
+      <button class="btn-action" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Report</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 BuildCalc Pro • Professional Architecture & Estimation Utility</p>
   </footer>
 
-  <!-- ================= MODALS ================= -->
-
-  <!-- ABOUT MODAL -->
-  <div id="aboutModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-card rounded-2xl max-w-lg w-full p-6 space-y-4 relative">
-      <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-sub hover:text-amber-500"><i class="fa-solid fa-xmark text-lg"></i></button>
-      <h3 class="text-xl font-bold text-title flex items-center gap-2"><i class="fa-solid fa-circle-info text-amber-500"></i> About BuildCalc Pro</h3>
-      <p class="text-xs text-sub leading-relaxed">
-        BuildCalc Pro is an enterprise micro-SaaS application engineered for civil contractors, quantity surveyors, real estate developers, and homeowners. It eliminates manual spreadsheet calculations by providing instant, accurate material volume breakdowns and budget forecasts.
-      </p>
-      <p class="text-xs text-sub leading-relaxed">
-        Built with high-performance responsive web components, zero external heavy dependencies, and multi-currency calculation support.
-      </p>
+  <!-- About Modal -->
+  <div class="modal-overlay" id="aboutModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('aboutModal')"><i class="fa-solid fa-xmark"></i></button>
+      <h2>About BuildCalc Pro</h2>
+      <p>BuildCalc Pro is an advanced architectural estimation platform built to help contractors, builders, and homeowners calculate exact material consumption instantly.</p>
     </div>
   </div>
 
-  <!-- PRIVACY MODAL -->
-  <div id="privacyModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-card rounded-2xl max-w-lg w-full p-6 space-y-4 relative">
-      <button onclick="closeModal('privacyModal')" class="absolute top-4 right-4 text-sub hover:text-amber-500"><i class="fa-solid fa-xmark text-lg"></i></button>
-      <h3 class="text-xl font-bold text-title flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-500"></i> Privacy Policy</h3>
-      <p class="text-xs text-sub leading-relaxed">
-        Your privacy is our priority. BuildCalc Pro operates 100% on client-side browser execution. We do not collect, store, or transmit your structural measurements, cost data, or personal details to any external servers.
-      </p>
-      <p class="text-xs text-sub leading-relaxed">
-        All calculations, unit rates, and settings are stored locally on your device session.
-      </p>
+  <!-- Guide Modal -->
+  <div class="modal-overlay" id="guideModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('guideModal')"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Estimation Guide</h2>
+      <p>1. Enter precise internal room length and width.<br>2. Set ceiling wall height.<br>3. Choose 9" or 4.5" brick masonry.<br>4. Review real-time material requirements.</p>
     </div>
   </div>
 
-  <!-- TERMS MODAL -->
-  <div id="termsModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-card rounded-2xl max-w-lg w-full p-6 space-y-4 relative">
-      <button onclick="closeModal('termsModal')" class="absolute top-4 right-4 text-sub hover:text-amber-500"><i class="fa-solid fa-xmark text-lg"></i></button>
-      <h3 class="text-xl font-bold text-title flex items-center gap-2"><i class="fa-solid fa-file-contract text-amber-500"></i> Terms of Use</h3>
-      <p class="text-xs text-sub leading-relaxed">
-        BuildCalc Pro estimations are based on standard civil engineering thumb rules and average material density ratios. Actual material consumption on site may vary depending on local brick dimensions, site topography, structural engineering specifications, and labor efficiency.
-      </p>
-      <p class="text-xs text-sub leading-relaxed">
-        Always consult a qualified structural engineer for official blueprint sign-offs before purchasing site inventory.
-      </p>
+  <!-- Privacy Modal -->
+  <div class="modal-overlay" id="privacyModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('privacyModal')"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Privacy Policy</h2>
+      <p>All calculations are processed locally inside your web browser. No structural or financial data is logged or stored on our servers.</p>
     </div>
   </div>
 
-  <!-- CONTACT MODAL -->
-  <div id="contactModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="glass-card rounded-2xl max-w-lg w-full p-6 space-y-5 relative">
-      <button onclick="closeModal('contactModal')" class="absolute top-4 right-4 text-sub hover:text-amber-500"><i class="fa-solid fa-xmark text-lg"></i></button>
-      <h3 class="text-xl font-bold text-title flex items-center gap-2"><i class="fa-solid fa-headset text-amber-500"></i> Developer & SaaS Inquiries</h3>
-      <p class="text-xs text-sub leading-relaxed">
-        Interested in acquiring full self-hosted source code or custom feature integration for your construction agency? Contact the lead developer directly:
-      </p>
-      
-      <div class="space-y-3 pt-2">
-        <a href="https://wa.me/923089423733" target="_blank" class="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/20 transition-colors text-xs font-bold">
-          <i class="fa-brands fa-whatsapp text-lg"></i> Direct WhatsApp: +92 308 9423733
-        </a>
-        <a href="https://tools-hub.vercel.app" target="_blank" class="flex items-center gap-3 p-3.5 rounded-xl input-box-theme border border-slate-700/50 hover:border-amber-500/50 transition-colors text-xs font-bold">
-          <i class="fa-solid fa-globe text-amber-500 text-lg"></i> Official Hub: tools-hub.vercel.app
-        </a>
-      </div>
+  <!-- Terms Modal -->
+  <div class="modal-overlay" id="termsModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('termsModal')"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Terms of Use</h2>
+      <p>Estimates generated by BuildCalc Pro are for reference and planning purposes. Actual site material consumption may vary based on local brick sizes and wastage.</p>
     </div>
   </div>
 
+  <!-- Contact Modal with Hub Link & WhatsApp -->
+  <div class="modal-overlay" id="contactModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('contactModal')"><i class="fa-solid fa-xmark"></i></button>
+      <h2>Contact Support & Custom Tools</h2>
+      <p>Explore more professional tools on our Hub:</p>
+      <a href="https://saas-tools-hub.vercel.app/" target="_blank" class="hub-link">
+        <i class="fa-solid fa-globe"></i> saas-tools-hub.vercel.app
+      </a>
+      <p style="margin-top: 15px;">Need custom tool development or modifications? Reach out directly via WhatsApp:</p>
+      <a href="https://wa.me/923089423733?text=Hi%20Ahmad,%20I%20want%20to%20discuss%20BuildCalc%20Pro" target="_blank" class="whatsapp-btn">
+        <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp (+92 308 9423733)
+      </a>
+    </div>
+  </div>
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // Global State for Extracted Data
-    let currentCalculation = {};
-
-    // CURRENCY SYMBOLS & RATES (Base: PKR)
-    const currencies = {
-      PKR: { symbol: '₨', rate: 1, label: 'PKR' },
-      USD: { symbol: '$', rate: 0.0036, label: 'USD' },
-      INR: { symbol: '₹', rate: 0.30, label: 'INR' },
-      EUR: { symbol: '€', rate: 0.0033, label: 'EUR' }
-    };
-
-    // TAB SWITCHING LOGIC
-    function switchTab(tabId) {
-      document.getElementById('tab-calc').classList.add('hidden');
-      document.getElementById('tab-guide').classList.add('hidden');
-      
-      document.getElementById('nav-calc').className = 'hover:text-amber-400 transition-colors py-1 border-b-2 border-transparent';
-      document.getElementById('nav-guide').className = 'hover:text-amber-400 transition-colors py-1 border-b-2 border-transparent';
-
-      if(tabId === 'calc') {
-        document.getElementById('tab-calc').classList.remove('hidden');
-        document.getElementById('nav-calc').className = 'hover:text-amber-400 transition-colors py-1 border-b-2 border-amber-400 text-amber-400';
-      } else if(tabId === 'guide') {
-        document.getElementById('tab-guide').classList.remove('hidden');
-        document.getElementById('nav-guide').className = 'hover:text-amber-400 transition-colors py-1 border-b-2 border-amber-400 text-amber-400';
-      }
-    }
-
-    // THEME TOGGLE LOGIC
     function toggleTheme() {
       const html = document.documentElement;
       const themeIcon = document.getElementById('themeIcon');
       if (html.getAttribute('data-theme') === 'dark') {
         html.setAttribute('data-theme', 'light');
-        document.body.classList.replace('bg-slate-950', 'bg-slate-100');
-        document.body.classList.replace('text-slate-100', 'text-slate-900');
-        themeIcon.className = 'fa-solid fa-sun text-amber-500';
+        themeIcon.className = 'fa-solid fa-sun';
       } else {
         html.setAttribute('data-theme', 'dark');
-        document.body.classList.replace('bg-slate-100', 'bg-slate-950');
-        document.body.classList.replace('text-slate-900', 'text-slate-100');
-        themeIcon.className = 'fa-solid fa-moon text-slate-300';
+        themeIcon.className = 'fa-solid fa-moon';
       }
     }
 
-    // RATES ACCORDION PANEL TOGGLE
-    function toggleRatesPanel() {
-      const panel = document.getElementById('ratesPanel');
-      const arrow = document.getElementById('ratesArrow');
-      panel.classList.toggle('hidden');
-      arrow.classList.toggle('rotate-180');
-    }
-
-    // MOBILE MENU TOGGLE
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobileMenu');
-      menu.classList.toggle('hidden');
-    }
-
-    // MODAL OPEN / CLOSE
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-    // RESET INPUTS
-    function resetInputs() {
-      document.getElementById('length').value = 14;
-      document.getElementById('width').value = 12;
-      document.getElementById('height').value = 10;
-      document.getElementById('thickness').value = 9;
-      document.getElementById('mortarRatio').value = '1:5';
-      document.getElementById('slabThickness').value = 5;
-      document.getElementById('openingsDeduction').value = 75;
-      document.getElementById('plasterOption').value = 'both';
-      calculateMaterial();
-    }
-
-    // MAIN CORE CALCULATION ENGINE
     function calculateMaterial() {
-      // 1. Inputs
       const L = parseFloat(document.getElementById('length').value) || 0;
       const W = parseFloat(document.getElementById('width').value) || 0;
       const H = parseFloat(document.getElementById('height').value) || 0;
       const T = parseFloat(document.getElementById('thickness').value) || 9;
-      const slabT = parseFloat(document.getElementById('slabThickness').value) || 5;
-      const openingsSqFt = parseFloat(document.getElementById('openingsDeduction').value) || 0;
-      const plasterOpt = document.getElementById('plasterOption').value;
+      const curr = document.getElementById('currency').value;
 
-      // Update Visual SVG Text
-      document.getElementById('visualDimensionsText').innerText = `${L}' × ${W}' × ${H}'`;
-
-      if (L <= 0 || W <= 0 || H <= 0) return;
-
-      // 2. Wall Area & Volume (Perimeter * Height)
       const perimeter = 2 * (L + W);
-      const grossWallArea = perimeter * H;
-      const netWallArea = Math.max(grossWallArea - openingsSqFt, 0);
-      const wallVolumeCFT = netWallArea * (T / 12);
+      const wallArea = Math.max((perimeter * H) - 50, 0);
+      const volumeCFT = wallArea * (T / 12);
 
-      // 3. Brick Estimation (13.5 Bricks per CFT for 9" wall including 5% wastage)
-      const brickFactor = T === 4.5 ? 6.75 : (T === 13.5 ? 20.25 : 13.5);
-      const totalBricks = Math.ceil(wallVolumeCFT * brickFactor * 1.05);
+      const bricks = Math.round(volumeCFT * (T === 9 ? 13.5 : 6.8));
+      const cement = Math.round(volumeCFT * 0.22);
+      const sand = Math.round(volumeCFT * 0.9);
 
-      // 4. Mortar & Cement Bags Calculation for Masonry
-      // Dry mortar volume approx 30% of wall volume
-      const dryMortarCFT = wallVolumeCFT * 0.30;
-      // Ratio 1:5 (Sum = 6) -> Cement = 1/6 of dry mortar
-      const masonryCementCFT = dryMortarCFT / 6;
-      let masonryCementBags = masonryCementCFT / 1.25; // 1 Bag = 1.25 CFT
+      let unitRate = 22;
+      let symbol = '₨ ';
+      if (curr === 'USD') { unitRate = 0.08; symbol = '$'; }
+      else if (curr === 'INR') { unitRate = 6.5; symbol = '₹'; }
+      else if (curr === 'EUR') { unitRate = 0.075; symbol = '€'; }
 
-      // 5. Plaster Cement & Sand Calculation
-      let plasterCementBags = 0;
-      let plasterSandCFT = 0;
-      if (plasterOpt !== 'none') {
-        const sides = plasterOpt === 'both' ? 2 : 1;
-        const plasterArea = netWallArea * sides;
-        const plasterVolumeCFT = plasterArea * (0.5 / 12); // 1/2 inch plaster
-        const dryPlasterCFT = plasterVolumeCFT * 1.35; // 35% dry volume expansion
-        // 1:4 Ratio (Sum = 5)
-        const plasterCementCFT = dryPlasterCFT / 5;
-        plasterCementBags = plasterCementCFT / 1.25;
-        plasterSandCFT = plasterCementCFT * 4;
-      }
+      const totalCostNum = Math.round(bricks * unitRate);
 
-      // 6. Roof Slab RCC Concrete Calculation
-      const slabAreaSqFt = L * W;
-      const slabVolumeCFT = slabAreaSqFt * (slabT / 12);
-      const dryConcreteCFT = slabVolumeCFT * 1.54; // Dry volume factor
-      // M20 Concrete Ratio 1:1.5:3 (Sum = 5.5)
-      const slabCementCFT = dryConcreteCFT / 5.5;
-      const slabCementBags = slabCementCFT / 1.25;
-      const slabSandCFT = slabCementCFT * 1.5;
-      const slabCrushCFT = slabCementCFT * 3.0;
-
-      // Steel Rebar Calculation (~2.5 kg per CFT of slab volume)
-      const totalSteelKG = Math.ceil(slabVolumeCFT * 2.5);
-
-      // Total Summarized Quantities
-      const totalCementBags = Math.ceil(masonryCementBags + plasterCementBags + slabCementBags);
-      const totalSandCFT = Math.ceil((dryMortarCFT * 5/6) + plasterSandCFT + slabSandCFT);
-      const totalCrushCFT = Math.ceil(slabCrushCFT);
-      const totalTileSqFt = Math.ceil(slabAreaSqFt * 1.08); // 8% tile cutting wastage
-
-      // 7. Costs Calculations
-      const currKey = document.getElementById('currencySelect').value;
-      const curr = currencies[currKey];
-
-      const rBrick = (parseFloat(document.getElementById('rateBrick').value) || 14) * curr.rate;
-      const rCement = (parseFloat(document.getElementById('rateCement').value) || 1350) * curr.rate;
-      const rSand = (parseFloat(document.getElementById('rateSand').value) || 55) * curr.rate;
-      const rCrush = (parseFloat(document.getElementById('rateCrush').value) || 130) * curr.rate;
-      const rSteel = (parseFloat(document.getElementById('rateSteel').value) || 270) * curr.rate;
-      const rLabor = (parseFloat(document.getElementById('rateLabor').value) || 450) * curr.rate;
-
-      const cBricks = totalBricks * rBrick;
-      const cCement = totalCementBags * rCement;
-      const cSand = totalSandCFT * rSand;
-      const cCrush = totalCrushCFT * rCrush;
-      const cSteel = totalSteelKG * rSteel;
-      const cLabor = slabAreaSqFt * rLabor;
-      const cTiles = totalTileSqFt * (180 * curr.rate);
-
-      const grandTotalCost = cBricks + cCement + cSand + cCrush + cSteel + cLabor + cTiles;
-
-      // Update UI Elements
-      document.getElementById('resBricks').innerText = totalBricks.toLocaleString();
-      document.getElementById('costBricks').innerText = `Cost: ${curr.symbol} ${Math.round(cBricks).toLocaleString()}`;
-
-      document.getElementById('resCement').innerText = totalCementBags.toLocaleString() + " Bags";
-      document.getElementById('costCement').innerText = `Cost: ${curr.symbol} ${Math.round(cCement).toLocaleString()}`;
-
-      document.getElementById('resSand').innerText = totalSandCFT.toLocaleString() + " CFT";
-      document.getElementById('costSand').innerText = `Cost: ${curr.symbol} ${Math.round(cSand).toLocaleString()}`;
-
-      document.getElementById('resCrush').innerText = totalCrushCFT.toLocaleString() + " CFT";
-      document.getElementById('costCrush').innerText = `Cost: ${curr.symbol} ${Math.round(cCrush).toLocaleString()}`;
-
-      document.getElementById('resSteel').innerText = totalSteelKG.toLocaleString() + " KG";
-      document.getElementById('costSteel').innerText = `Cost: ${curr.symbol} ${Math.round(cSteel).toLocaleString()}`;
-
-      document.getElementById('resTiles').innerText = totalTileSqFt.toLocaleString() + " SqFt";
-      document.getElementById('costTiles').innerText = `Cost: ${curr.symbol} ${Math.round(cTiles).toLocaleString()}`;
-
-      document.getElementById('resGrandTotal').innerText = `${curr.symbol} ${Math.round(grandTotalCost).toLocaleString()} ${curr.label}`;
-
-      // Save calculation snapshot
-      currentCalculation = {
-        dimensions: `${L}' x ${W}' x ${H}'`,
-        bricks: totalBricks,
-        cement: totalCementBags,
-        sand: totalSandCFT,
-        crush: totalCrushCFT,
-        steel: totalSteelKG,
-        tiles: totalTileSqFt,
-        totalCost: `${curr.symbol} ${Math.round(grandTotalCost).toLocaleString()} ${curr.label}`
-      };
+      document.getElementById('resBricks').innerText = bricks.toLocaleString();
+      document.getElementById('resCement').innerText = cement + " Bags";
+      document.getElementById('resSand').innerText = sand + " Cu.Ft";
+      document.getElementById('resCost').innerText = symbol + totalCostNum.toLocaleString();
     }
 
-    // CSV EXPORT ENGINE
-    function exportCSV() {
-      if (!currentCalculation.bricks) return;
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-      let csv = "Item,Quantity,Unit\n";
-      csv += `Bricks,${currentCalculation.bricks},Pcs\n`;
-      csv += `Cement,${currentCalculation.cement},Bags\n`;
-      csv += `Sand,${currentCalculation.sand},CFT\n`;
-      csv += `Crush / Aggregate,${currentCalculation.crush},CFT\n`;
-      csv += `Steel Rebar,${currentCalculation.steel},KG\n`;
-      csv += `Tiles,${currentCalculation.tiles},SqFt\n`;
-      csv += `Grand Estimated Total,${currentCalculation.totalCost}\n`;
-
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.setAttribute('href', url);
-      a.setAttribute('download', `BuildCalc_Report_${Date.now()}.csv`);
-      a.click();
-    }
-
-    // RUN INITIAL CALCULATION ON LOAD
-    window.onload = function() {
-      calculateMaterial();
-    };
+    calculateMaterial();
   </script>
-
 </body>
 </html>
