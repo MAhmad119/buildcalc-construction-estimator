@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuildCalc Pro — Construction Material Estimator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --input-bg: #1f2937;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .navbar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 25px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      margin-bottom: 25px;
+    }
+
+    .brand { font-size: 20px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .hero { text-align: center; margin-bottom: 30px; }
+    .hero h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    .hero p { color: var(--text-muted); font-size: 14px; }
+
+    .grid-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .input-box {
+      background: var(--input-bg);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .input-box label { display: block; font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
+    .input-box input, .input-box select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .btn-calc {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-bottom: 30px;
+    }
+
+    .btn-calc:hover { background: var(--accent-hover); }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .res-card {
+      background: rgba(31, 41, 55, 0.5);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .res-card i { font-size: 24px; color: var(--accent); margin-bottom: 10px; }
+    .res-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+    .res-card p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+    footer { margin-top: 30px; color: var(--text-muted); font-size: 13px; }
+
+    @media (max-width: 600px) {
+      .grid-inputs, .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="brand"><i class="fa-solid fa-trowel-bricks"></i> BuildCalc Pro</div>
+    <span style="font-size:12px; color:var(--text-muted)">v1.0 Ready</span>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Room Construction Material Estimator</h1>
+      <p>Enter room measurements to calculate bricks, cement bags, sand, and aggregate needed.</p>
+    </div>
+
+    <!-- Inputs -->
+    <div class="grid-inputs">
+      <div class="input-box">
+        <label>Room Length (Feet)</label>
+        <input type="number" id="length" value="12" placeholder="e.g. 12" />
+      </div>
+      <div class="input-box">
+        <label>Room Width (Feet)</label>
+        <input type="number" id="width" value="14" placeholder="e.g. 14" />
+      </div>
+      <div class="input-box">
+        <label>Wall Height (Feet)</label>
+        <input type="number" id="height" value="10" placeholder="e.g. 10" />
+      </div>
+      <div class="input-box">
+        <label>Wall Thickness</label>
+        <select id="thickness">
+          <option value="9">9 Inches (Standard Outer Wall)</option>
+          <option value="4.5">4.5 Inches (Inner Partition Wall)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-calc" onclick="calculateMaterial()">
+      <i class="fa-solid fa-calculator"></i> Calculate Required Materials
+    </button>
+
+    <!-- Results Display -->
+    <div class="results-grid">
+      <div class="res-card">
+        <i class="fa-solid fa-cubes"></i>
+        <h3 id="resBricks">0</h3>
+        <p>Bricks Needed (Eentein)</p>
+      </div>
+      <div class="res-card">
+        <i class="fa-solid fa-box-open"></i>
+        <h3 id="resCement">0 Bags</h3>
+        <p>Cement Bags (Wall + Plaster)</p>
+      </div>
+      <div class="res-card">
+        <i class="fa-solid fa-mountain"></i>
+        <h3 id="resSand">0 Cu.Ft</h3>
+        <p>Sand / Mitti (Reth/Bajri)</p>
+      </div>
+      <div class="res-card">
+        <i class="fa-solid fa-layer-group"></i>
+        <h3 id="resCrush">0 Cu.Ft</h3>
+        <p>Crush / Gravel (Lintel/Roof)</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 BuildCalc Pro • Modern Civil Calculation Utility</p>
+  </footer>
+
+  <script>
+    function calculateMaterial() {
+      const L = parseFloat(document.getElementById('length').value) || 0;
+      const W = parseFloat(document.getElementById('width').value) || 0;
+      const H = parseFloat(document.getElementById('height').value) || 0;
+      const T = parseFloat(document.getElementById('thickness').value) || 9;
+
+      if(L <= 0 || W <= 0 || H <= 0) {
+        alert('Please enter valid room measurements!');
+        return;
+      }
+
+      // Total perimeter of 4 walls
+      const perimeter = 2 * (L + W);
+      const wallAreaSquareFeet = perimeter * H;
+
+      // Standard deductions for 1 door & 2 windows (approx 60 sq.ft)
+      const netWallArea = Math.max(wallAreaSquareFeet - 60, 0);
+
+      // Wall Volume in Cubic Feet (CFT)
+      const wallVolumeCFT = netWallArea * (T / 12);
+
+      // Calculations:
+      // Standard Brick count = ~13.5 bricks per CFT for 9" wall
+      const totalBricks = Math.round(wallVolumeCFT * 13.5);
+
+      // Mortar + Plaster Cement Bags calculation (approx 0.22 bags per CFT)
+      const totalCement = Math.round(wallVolumeCFT * 0.22);
+
+      // Sand calculation (approx 0.9 CFT sand per 1 CFT wall volume)
+      const totalSand = Math.round(wallVolumeCFT * 0.9);
+
+      // Roof Slab Concrete Crush Calculation (for room ceiling slab)
+      const slabArea = L * W;
+      const totalCrush = Math.round(slabArea * 0.45);
+
+      // Update UI
+      document.getElementById('resBricks').innerText = totalBricks.toLocaleString();
+      document.getElementById('resCement').innerText = totalCement + " Bags";
+      document.getElementById('resSand').innerText = totalSand + " Cu.Ft";
+      document.getElementById('resCrush').innerText = totalCrush + " Cu.Ft";
+    }
+
+    // Run once on load
+    calculateMaterial();
+  </script>
+</body>
+</html>
